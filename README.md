@@ -15,7 +15,7 @@ MemAvailable ≈ MemFree + Buffers + Cached
 
 
 ## 默认设备名
-`/dev/sda`
+`/dev/sd` + ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n"]
 
 ## 默认路径
 `/var/lib/wawu`
