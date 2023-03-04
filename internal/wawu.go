@@ -26,10 +26,10 @@ func switchFsname() {
 		if _, err := os.Stat(cur); err != nil && os.IsNotExist(err) {
 			DEFAULT_FSNAME = cur
 			log.Println("DEFAULT_FSNAME:", DEFAULT_FSNAME)
-			break
+			return
 		}
 	}
-	log.Fatalln("Failed to generate DEFAULT_FSNAME")
+	log.Fatalln("ERROR: Failed to generate DEFAULT_FSNAME")
 }
 
 func init() {
