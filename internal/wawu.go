@@ -13,6 +13,25 @@ import (
 	"strings"
 )
 
+const (
+	DEFAULT_DIR = "/var/lib/wawu"
+)
+
+var suffixes = [...]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n"}
+var DEFAULT_FSNAME = "/dev/sd"
+
+func switchFsname() {
+	for _, suffix := range suffixes {
+		cur := DEFAULT_FSNAME + suffix
+		if _, err := os.Stat(cur); err != nil && os.IsNotExist(err) {
+			DEFAULT_FSNAME = cur
+			log.Println("DEFAULT_FSNAME:", DEFAULT_FSNAME)
+			break
+		}
+	}
+	log.Fatalln("Failed to generate DEFAULT_FSNAME")
+}
+
 func init() {
 	_, err := os.Stat(DEFAULT_DIR)
 	if err != nil && os.IsNotExist(err) {
@@ -23,6 +42,8 @@ func init() {
 		}
 		log.Println("init dir:", DEFAULT_DIR)
 	}
+
+	switchFsname()
 }
 
 type Wawu struct {

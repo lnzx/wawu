@@ -6,9 +6,7 @@ import (
 )
 
 const (
-	defaultPath    = "/"
-	DEFAULT_DIR    = "/var/lib/wawu"
-	DEFAULT_FSNAME = "/dev/sdb"
+	defaultPath = "/"
 )
 
 func GetDiskUsed() uint64 {
