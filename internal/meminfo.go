@@ -21,6 +21,9 @@ func GetMeminfo() string {
 		if strings.HasPrefix(line, "MemTotal:") {
 			memTotal := parseLineValue(line)
 			memTotalGB := KBToGB(memTotal)
+			if memTotalGB == 0 {
+				memTotalGB = 1
+			}
 			if memTotalGB >= defaultMemGB {
 				return info
 			}
