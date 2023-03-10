@@ -34,9 +34,10 @@ Install
 
 Usage
 ```shell
-docker run -it \
-      -v /var/lib/wawu/cpuinfo:/proc/cpuinfo:rw \
+docker run -it --name=test \
       -v /var/lib/wawu/meminfo:/proc/meminfo:rw \
+      -v /var/lib/wawu/cpuinfo:/proc/cpuinfo:rw \
+      -v /var/lib/wawu/lscpu:/var/lib/wawu/lscpu:rw \
       ubuntu /bin/bash
 ```
 
