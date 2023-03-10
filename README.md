@@ -34,7 +34,8 @@ Install
 
 Usage
 ```shell
-docker run -it --name test  \
+docker run -it \
+      -v /var/lib/wawu/cpuinfo:/proc/cpuinfo:rw \
       -v /var/lib/wawu/meminfo:/proc/meminfo:rw \
       ubuntu /bin/bash
 ```
@@ -43,12 +44,11 @@ Fix:
 
 cpu:
 ```shell
-
+/var/lib/wawu/lscpu
 ```
 
 disk:
 
 ```shell
-df -B GB /proc/meminfo
 df -B MB /proc/meminfo
 ```

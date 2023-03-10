@@ -3,6 +3,7 @@ package internal
 import (
 	"log"
 	"os"
+	"os/exec"
 	"regexp"
 	"runtime"
 	"strconv"
@@ -13,7 +14,8 @@ const (
 	minCPUCores = 6
 )
 
-var cpuinfoRegx = regexp.MustCompile(`\d`)
+var numberRegx = regexp.MustCompile(`\d`)
+var stringRegx = regexp.MustCompile(`0-\d`)
 
 func GetCpuinfo() string {
 	info := readCpuinfo()
@@ -31,10 +33,10 @@ func GetCpuinfo() string {
 			break
 		}
 		if strings.HasPrefix(line, "siblings") {
-			line = replaceProcessorValue(line, minCPUCores)
+			line = replaceNumberValue(line, minCPUCores)
 		}
 		if strings.HasPrefix(line, "cpu cores") {
-			line = replaceProcessorValue(line, minCPUCores)
+			line = replaceNumberValue(line, minCPUCores)
 		}
 		processor = append(processor, line)
 	}
@@ -43,16 +45,16 @@ func GetCpuinfo() string {
 	for i := 0; i < minCPUCores; i++ {
 		for _, line := range processor {
 			if strings.HasPrefix(line, "processor") {
-				line = replaceProcessorValue(line, i)
+				line = replaceNumberValue(line, i)
 			}
 			if strings.HasPrefix(line, "core id") {
-				line = replaceProcessorValue(line, i)
+				line = replaceNumberValue(line, i)
 			}
 			if strings.HasPrefix(line, "apicid") {
-				line = replaceProcessorValue(line, i)
+				line = replaceNumberValue(line, i)
 			}
 			if strings.HasPrefix(line, "initial apicid") {
-				line = replaceProcessorValue(line, i)
+				line = replaceNumberValue(line, i)
 			}
 			processors = append(processors, line)
 		}
@@ -71,6 +73,48 @@ func readCpuinfo() string {
 	return data
 }
 
-func replaceProcessorValue(line string, value int) string {
-	return cpuinfoRegx.ReplaceAllString(line, strconv.Itoa(value))
+func replaceNumberValue(line string, value int) string {
+	return numberRegx.ReplaceAllString(line, strconv.Itoa(value))
+}
+
+func replaceStringValue(line string, value string) string {
+	return stringRegx.ReplaceAllString(line, value)
+}
+
+func Lscpu() string {
+	cmd := exec.Command("lscpu")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Println(err)
+		return ""
+	}
+	numCPU := runtime.NumCPU()
+	log.Println("NumCPU:", numCPU)
+	if numCPU >= minCPUCores {
+		return string(out)
+	}
+	info := string(out)
+	lines := strings.Split(info, "\n")
+	for i, line := range lines {
+		if strings.HasPrefix(line, "CPU(s):") {
+			line = replaceNumberValue(line, minCPUCores)
+			lines[i] = line
+		}
+		if strings.HasPrefix(strings.TrimSpace(line), "On-line CPU(s) list:") {
+			line = replaceStringValue(line, "0-5")
+			lines[i] = line
+		}
+		if strings.HasPrefix(strings.TrimSpace(line), "Core(s) per socket:") ||
+			strings.HasPrefix(strings.TrimSpace(line), "Core(s) per cluster:") {
+			line = replaceNumberValue(line, minCPUCores)
+			lines[i] = line
+		}
+		if strings.HasPrefix(strings.TrimSpace(line), "NUMA node0 CPU(s):") {
+			line = replaceStringValue(line, "0-5")
+			lines[i] = line
+		}
+	}
+
+	info = strings.Join(lines, "\n")
+	return info
 }

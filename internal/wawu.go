@@ -153,6 +153,8 @@ func (fs *Wawu) ReadFile(ctx context.Context, op *fuseops.ReadFileOp) error {
 		info = GetCpuinfo()
 	case meminfo:
 		info = GetMeminfo()
+	case lscpu:
+		info = Lscpu()
 	default:
 		log.Println("not supported")
 		return fuse.ENOENT

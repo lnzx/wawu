@@ -11,6 +11,7 @@ import (
 const (
 	cpuinfo = 2
 	meminfo = 3
+	lscpu   = 4
 )
 
 type Inode struct {
@@ -72,6 +73,12 @@ func InitRootInode() *Inode {
 				Offset: 2,
 				Inode:  meminfo,
 				Name:   "meminfo",
+				Type:   fuseutil.DT_File,
+			},
+			{
+				Offset: 3,
+				Inode:  lscpu,
+				Name:   "lscpu",
 				Type:   fuseutil.DT_File,
 			},
 		},
