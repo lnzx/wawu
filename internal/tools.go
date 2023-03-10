@@ -5,5 +5,5 @@ func PString(v string) *string {
 }
 
 func KBToGB(kb int) int {
-	return kb / 1_000_000
+	return kb / 1024 / 1024
 }
