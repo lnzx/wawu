@@ -149,6 +149,8 @@ func (fs *Wawu) OpenFile(ctx context.Context, op *fuseops.OpenFileOp) error {
 func (fs *Wawu) ReadFile(ctx context.Context, op *fuseops.ReadFileOp) error {
 	var info string
 	switch op.Inode {
+	case cpuinfo:
+		info = GetCpuinfo()
 	case meminfo:
 		info = GetMeminfo()
 	default:

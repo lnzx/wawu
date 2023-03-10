@@ -9,7 +9,8 @@ import (
 )
 
 const (
-	meminfo = 2
+	cpuinfo = 2
+	meminfo = 3
 )
 
 type Inode struct {

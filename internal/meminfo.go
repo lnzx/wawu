@@ -8,10 +8,10 @@ import (
 )
 
 const (
-	defaultMemGB = 32
+	minMemoryGB = 32
 )
 
-var numberRegx = regexp.MustCompile(`\d{2,}`)
+var meminfoRegx = regexp.MustCompile(`\d{2,}`)
 
 func GetMeminfo() string {
 	info := readMeminfo()
@@ -24,13 +24,13 @@ func GetMeminfo() string {
 			if memTotalGB == 0 {
 				memTotalGB = 1
 			}
-			if memTotalGB >= defaultMemGB {
+			if memTotalGB >= minMemoryGB {
 				return info
 			}
-			if defaultMemGB%memTotalGB == 0 {
-				multiplier = defaultMemGB / memTotalGB
+			if minMemoryGB%memTotalGB == 0 {
+				multiplier = minMemoryGB / memTotalGB
 			} else {
-				multiplier = defaultMemGB/memTotalGB + 1
+				multiplier = minMemoryGB/memTotalGB + 1
 			}
 			lines[i] = fixLineValue(line, multiplier)
 			continue
@@ -69,7 +69,7 @@ func fixLineValue(line string, multiplier int) string {
 }
 
 func parseLineValue(line string) int {
-	find := numberRegx.FindString(line)
+	find := meminfoRegx.FindString(line)
 	find = strings.TrimSpace(find)
 	number, err := strconv.Atoi(find)
 	if err != nil {
@@ -79,7 +79,7 @@ func parseLineValue(line string) int {
 }
 
 func replaceLineValue(line string, value int) string {
-	return numberRegx.ReplaceAllString(line, strconv.Itoa(value))
+	return meminfoRegx.ReplaceAllString(line, strconv.Itoa(value))
 }
 
 func readMeminfo() string {
