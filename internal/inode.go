@@ -64,6 +64,12 @@ func InitRootInode() *Inode {
 		children: []fuseutil.Dirent{
 			{
 				Offset: 1,
+				Inode:  cpuinfo,
+				Name:   "cpuinfo",
+				Type:   fuseutil.DT_File,
+			},
+			{
+				Offset: 2,
 				Inode:  meminfo,
 				Name:   "meminfo",
 				Type:   fuseutil.DT_File,
